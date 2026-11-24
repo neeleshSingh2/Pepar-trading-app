@@ -3,55 +3,248 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>PEPAR TRADING - V3 ULTIMATE</title>
+<title>PEPAR TRADING - V3.2 BROKER</title>
 <script src="https://s3.tradingview.com/tv.js"></script>
 <style>
 *{margin:0;padding:0;box-sizing:border-box;font-family:Arial,sans-serif}
-body{background:#07090c;color:#fff;padding-bottom:30px}
+body{background:#07090c;color:#fff}
 .top{background:#131722;padding:14px 15px;display:flex;justify-content:space-between;align-items:center;position:sticky;top:0;z-index:20;border-bottom:2px solid #fcd535}
-.top b{color:#fcd535;font-size:21px}.top span{color:#0ecb81;font-size:13px}
-.tabs{display:flex;gap:8px;padding:10px;overflow-x:auto;white-space:nowrap}
-.tab{padding:10px 18px;background:#1e222d;border-radius:20px;cursor:pointer;font-weight:bold;border:2px solid transparent}
+.top b{color:#fcd535;font-size:20px}
+.tabs{display:flex;gap:8px;padding:10px;overflow-x:auto}
+.tab{padding:10px 18px;background:#1e222d;border-radius:20px;cursor:pointer;font-weight:bold;white-space:nowrap}
 .tab.active{background:#fcd535;color:#000}
 .card{background:#131722;border-radius:14px;padding:14px;margin:0 10px 10px}
 .grid{display:grid;grid-template-columns:1fr;gap:10px}
-@media(min-width:900px){.grid{grid-template-columns:280px 1fr 300px}.charts4{grid-template-columns:1fr 1fr}}
-.coin{display:flex;justify-content:space-between;align-items:center;padding:11px;border-radius:10px;cursor:pointer;margin-bottom:6px;border:2px solid transparent;background:#1e222d}
+@media(min-width:900px){.grid{grid-template-columns:280px 1fr 300px}}
+.coin{display:flex;justify-content:space-between;align-items:center;padding:11px;border-radius:10px;cursor:pointer;margin-bottom:6px;background:#1e222d;border:2px solid transparent}
 .coin.active{border-color:#fcd535;background:#2a3040}
 .coin small{color:#8b93a7}.up{color:#0ecb81}.down{color:#f6465d}
-#mainChart{height:380px;background:#000;border-radius:10px;overflow:hidden}
-.mini{height:180px;background:#000;border-radius:10px;overflow:hidden}
-.charts4{display:grid;gap:10px;margin:10px}
-.charts4 h4{margin-bottom:6px}
+.mainChart{height:380px;background:#000;border-radius:10px;overflow:hidden}
+.chartBox{position:relative;margin-top:10px}
+.chartBox .close{position:absolute;top:5px;right:5px;background:#f6465d;color:#fff;border:none;padding:5px 10px;border-radius:6px;cursor:pointer;z-index:5}
+.chartGrid1{display:grid;grid-template-columns:1fr;gap:10px}
+.chartGrid2{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+@media(max-width:700px){.chartGrid2{grid-template-columns:1fr}}
 .indRow{display:flex;gap:8px;margin-top:10px;flex-wrap:wrap}
 .ind{flex:1;min-width:100px;background:#1e222d;padding:12px;border-radius:10px;text-align:center}
 .ind b{font-size:19px;display:block;margin-top:4px}
-input{width:100%;padding:12px;border-radius:8px;border:none;background:#1e222d;color:#fff;font-size:16px;margin:8px 0}
-.btn{width:100%;padding:14px;border:none;border-radius:10px;font-size:17px;font-weight:bold;cursor:pointer;margin-top:6px}
+input,select{width:100%;padding:12px;border-radius:8px;border:none;background:#1e222d;color:#fff;font-size:16px;margin:8px 0}
+.btn{width:100%;padding:14px;border:none;border-radius:10px;font-size:16px;font-weight:bold;cursor:pointer;margin-top:6px}
 .buy{background:#0ecb81;color:#fff}.sell{background:#f6465d;color:#fff}
-.badge{background:#fcd535;color:#000;padding:3px 8px;border-radius:6px;font-size:11px}
-.ticker{background:#fcd535;color:#000;padding:8px 10px;overflow:hidden;white-space:nowrap;font-weight:bold}
-.ticker span{margin-right:30px}
+.addBtn{background:#fcd535;color:#000;padding:10px 14px;border:none;border-radius:8px;font-weight:bold;cursor:pointer}
+.smallBtn{background:#2a3040;color:#fff;padding:8px 12px;border:none;border-radius:8px;cursor:pointer}
+.ticker{background:#fcd535;color:#000;padding:8px 10px;font-weight:bold;overflow:hidden}
+.newsItem{display:flex;gap:10px;padding:12px;background:#1e222d;border-radius:10px;margin-bottom:8px;cursor:pointer}
+.newsItem img{width:70px;height:70px;object-fit:cover;border-radius:8px}
+.newsItem b{font-size:13px;line-height:18px;display:block}
+.newsItem small{color:#8b93a7;font-size:11px}
 </style>
 </head>
 <body>
-<div class="top"><b>🪙 PEPAR TRADING <span class="badge">V3 ULTIMATE</span></b><span>● LIVE 🟢</span></div>
-<div class="ticker"><marquee id="tickerText">Loading Live Market...</marquee></div>
-
+<div class="top"><b>🪙 PEPAR TRADING <span style="background:#fcd535;color:#000;padding:2px 8px;border-radius:6px;font-size:11px">V3.2 BROKER</span></b><span style="color:#0ecb81">● LIVE 🟢</span></div>
+<div class="ticker"><marquee id="tickerText">Live Market Loading...</marquee></div>
 <div class="tabs">
 <div class="tab active" onclick="switchTab('crypto',this)">₿ CRYPTO</div>
 <div class="tab" onclick="switchTab('forex',this)">💱 FOREX + GOLD</div>
-<div class="tab" onclick="switchTab('indian',this)">🇮🇳 INDIAN MARKET</div>
-<div class="tab" onclick="switchTab('multi',this)">📊 4 CHART EK SATH</div>
+<div class="tab" onclick="switchTab('indian',this)">🇮🇳 INDIAN</div>
+<div class="tab" onclick="switchTab('news',this)">📰 NEWS</div>
 </div>
 
 <div class="grid">
-<div class="card">
-<h3 id="listTitle">🔥 Top Crypto</h3>
-<p style="color:#8b93a7;font-size:12px;margin:6px 0">Kisi pe bhi click karo, chart badal jayega</p>
-<div id="coinList"></div>
+<div class="card"><h3 id="listTitle">🔥 Top Crypto</h3><p style="color:#8b93a7;font-size:12px;margin:6px 0">Click karo, chart badlega</p><div id="coinList"><p style="color:#fcd535">⏳ Loading...</p></div></div>
+
+<div class="card" id="chartCard">
+<div style="display:flex;justify-content:space-between;flex-wrap:wrap;gap:8px">
+<div><h2 id="coinName">Bitcoin (BTC)</h2><h1 id="mainPrice" style="color:#fcd535;margin:6px 0">Loading...</h1><span id="change24">--</span></div>
+<div style="display:flex;gap:6px;align-items:flex-start;flex-wrap:wrap">
+<button class="smallBtn" onclick="setLayout(1)">1 Chart</button>
+<button class="smallBtn" onclick="setLayout(2)">2 Chart</button>
+<button class="smallBtn" onclick="setLayout(4)">4 Chart</button>
+</div>
 </div>
 
-<div class="card">
-<div style="display:flex;justify-content:space-between">
-<div><h2 id="coin
+<!-- ADD CHART - BROKER STYLE -->
+<div style="background:#1e222d;padding:12px;border-radius:10px;margin-top:12px;display:flex;gap:8px;flex-wrap:wrap;align-items:center">
+<b style="font-size:14px">➕ Chart Add Karo:</b>
+<select id="addSymbol" style="flex:1;min-width:150px;margin:0">
+<option value="BINANCE:BTCUSDT">Bitcoin - BTC</option>
+<option value="BINANCE:ETHUSDT">Ethereum - ETH</option>
+<option value="BINANCE:SOLUSDT">Solana - SOL</option>
+<option value="BINANCE:DOGEUSDT">Dogecoin - DOGE</option>
+<option value="BINANCE:BNBUSDT">BNB</option>
+<option value="BINANCE:XRPUSDT">XRP</option>
+<option value="OANDA:XAUUSD">GOLD</option>
+<option value="OANDA:EURUSD">EUR / USD</option>
+<option value="OANDA:USDINR">USD / INR</option>
+<option value="NSE:NIFTY">Nifty 50</option>
+<option value="NSE:RELIANCE">Reliance</option>
+<option value="NSE:TCS">TCS</option>
+<option value="NSE:INFY">Infosys</option>
+</select>
+<button class="addBtn" onclick="addNewChart()">+ ADD CHART</button>
+</div>
+
+<div id="chartsArea" class="chartGrid1"></div>
+
+<div class="indRow">
+<div class="ind"><small>RSI</small><b id="rsiVal">--</b><small id="rsiSignal">--</small></div>
+<div class="ind"><small>MACD</small><b id="macdVal">--</b><small id="macdSignal">--</small></div>
+<div class="ind"><small>TREND</small><b id="trendVal">--</b><small>Live</small></div>
+<div class="ind"><small>AI SIGNAL</small><b id="finalSignal" style="color:#fcd535">--</b><small>Live</small></div>
+</div>
+</div>
+
+<div class="card"><h3>💰 My Wallet</h3><h1 style="color:#0ecb81;margin:8px 0">₹ <span id="balance">100000</span></h1><hr style="border:1px solid #2a3040;margin:12px 0"><h3>Buy / Sell - <span id="tradeCoin">BTC</span></h3><input type="number" id="qty" value="0.001" step="0.001"><p style="font-size:13px">Total: <b id="totalCost">$ 0</b> | <b id="totalINR">₹ 0</b></p><button class="btn buy" onclick="buy()">BUY 🟢</button><button class="btn sell" onclick="sell()">SELL 🔴</button><div id="holdings" style="margin-top:10px;font-size:14px;line-height:22px"></div><p style="font-size:11px;color:#8b93a7;margin-top:10px">⚠️ Paper Trading Only</p></div>
+</div>
+
+<!-- NEWS SECTION -->
+<div class="card" id="newsCard">
+<h3>📰 Live Crypto News - Aaj Ki Khabar</h3>
+<p style="color:#8b93a7;font-size:12px;margin:6px 0">Khabar pe click karo, poori news khulegi</p>
+<div id="newsList"><p>⏳ News load ho rahi hai...</p></div>
+<button class="btn" style="background:#2a3040;color:#fff" onclick="fetchNews()">🔄 News Refresh Karo</button>
+</div>
+
+<script>
+let allData={
+crypto:[
+ {id:"bitcoin",name:"Bitcoin",short:"BTC",tv:"BINANCE:BTCUSDT"},
+ {id:"ethereum",name:"Ethereum",short:"ETH",tv:"BINANCE:ETHUSDT"},
+ {id:"solana",name:"Solana",short:"SOL",tv:"BINANCE:SOLUSDT"},
+ {id:"dogecoin",name:"Dogecoin",short:"DOGE",tv:"BINANCE:DOGEUSDT"},
+ {id:"binancecoin",name:"BNB",short:"BNB",tv:"BINANCE:BNBUSDT"},
+ {id:"ripple",name:"XRP",short:"XRP",tv:"BINANCE:XRPUSDT"},
+ {id:"cardano",name:"Cardano",short:"ADA",tv:"BINANCE:ADAUSDT"},
+ {id:"chainlink",name:"Chainlink",short:"LINK",tv:"BINANCE:LINKUSDT"},
+ {id:"tron",name:"Tron",short:"TRX",tv:"BINANCE:TRXUSDT"},
+ {id:"polygon",name:"Polygon",short:"MATIC",tv:"BINANCE:MATICUSDT"},
+],
+forex:[
+ {id:"f1",name:"Euro / Dollar",short:"EURUSD",tv:"OANDA:EURUSD"},
+ {id:"f2",name:"Pound / Dollar",short:"GBPUSD",tv:"OANDA:GBPUSD"},
+ {id:"f3",name:"Dollar / Rupee",short:"USDINR",tv:"OANDA:USDINR"},
+ {id:"f4",name:"GOLD",short:"GOLD",tv:"OANDA:XAUUSD"},
+ {id:"f5",name:"Dollar / Yen",short:"USDJPY",tv:"OANDA:USDJPY"},
+],
+indian:[
+ {id:"i1",name:"Nifty 50",short:"NIFTY",tv:"NSE:NIFTY"},
+ {id:"i2",name:"Sensex",short:"SENSEX",tv:"BSE:SENSEX"},
+ {id:"i3",name:"Reliance",short:"RELIANCE",tv:"NSE:RELIANCE"},
+ {id:"i4",name:"TCS",short:"TCS",tv:"NSE:TCS"},
+ {id:"i5",name:"Infosys",short:"INFY",tv:"NSE:INFY"},
+ {id:"i6",name:"HDFC Bank",short:"HDFCBANK",tv:"NSE:HDFCBANK"},
+],
+news:[]
+};
+let currentTab='crypto'; let coins=allData.crypto; let selected=coins[0];
+let balance=parseFloat(localStorage.getItem("pepar_bal")||100000);
+let holdings=JSON.parse(localStorage.getItem("pepar_hold")||"{}");
+let prices={}; let changes={}; let usdToInr=88;
+let chartCount=0;
+
+function save(){localStorage.setItem("pepar_bal",balance);localStorage.setItem("pepar_hold",JSON.stringify(holdings));renderWallet();}
+function renderWallet(){
+ document.getElementById("balance").innerText=balance.toFixed(2);
+ let h="<b>📦 My Holdings:</b><br>"; let total=0;
+ for(let k in holdings){ if(holdings[k]>0){ let p=prices[k]||0; let val=holdings[k]*p; total+=val; h+=`${k}: ${holdings[k].toFixed(4)} = $${val.toFixed(2)}<br>`; } }
+ if(total==0) h+="Abhi kuch nahi kharida"; else h+=`<b>Total: $${total.toFixed(2)}</b>`;
+ document.getElementById("holdings").innerHTML=h; updateTotal();
+}
+function updateTotal(){
+ let q=parseFloat(document.getElementById("qty").value||0); let p=prices[selected.short]||0;
+ document.getElementById("totalCost").innerText="$ "+(q*p).toFixed(2);
+ document.getElementById("totalINR").innerText="₹ "+(q*p*usdToInr).toFixed(0);
+}
+document.getElementById("qty").addEventListener("input",updateTotal);
+
+function switchTab(tab,el){
+ document.querySelectorAll(".tab").forEach(t=>t.classList.remove("active")); el.classList.add("active");
+ if(tab=='news'){ document.getElementById("newsCard").scrollIntoView({behavior:"smooth"}); fetchNews(); return; }
+ currentTab=tab; coins=allData[tab]; selected=coins[0];
+ document.getElementById("listTitle").innerText=tab=='crypto'?"🔥 Top Crypto":tab=='forex'?"💱 Forex + Gold":"🇮🇳 Indian Market";
+ clearCharts(); createChart(selected.tv, selected.name); fetchPrices(); calcFake();
+}
+function clearCharts(){ document.getElementById("chartsArea").innerHTML=""; chartCount=0; }
+function createChart(symbol, label){
+ chartCount++; let id="chart_"+chartCount+"_"+Date.now();
+ let div=document.createElement("div"); div.className="chartBox"; div.id="box_"+id;
+ div.innerHTML=`<div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:6px"><b>📊 ${label} - ${symbol}</b><button class="close" onclick="document.getElementById('box_${id}').remove()">✕ Remove</button></div><div class="mainChart" id="${id}"></div>`;
+ document.getElementById("chartsArea").appendChild(div);
+ new TradingView.widget({autosize:true,symbol:symbol,interval:"15",timezone:"Asia/Kolkata",theme:"dark",style:"1",locale:"en",toolbar_bg:"#131722",enable_publishing:false,studies:["RSI@tv-basicstudies","MACD@tv-basicstudies"],container_id:id});
+}
+function addNewChart(){
+ let sel=document.getElementById("addSymbol"); let sym=sel.value; let label=sel.options[sel.selectedIndex].text;
+ createChart(sym,label);
+ document.getElementById("chartsArea").scrollIntoView({behavior:"smooth"});
+}
+function setLayout(n){
+ let area=document.getElementById("chartsArea");
+ if(n==1){ area.className="chartGrid1"; }
+ else { area.className="chartGrid2"; }
+ if(n==4 && chartCount<4){
+  createChart("BINANCE:ETHUSDT","Ethereum - ETH");
+  createChart("OANDA:XAUUSD","GOLD");
+  createChart("NSE:NIFTY","Nifty 50");
+ }
+ if(n==2 && chartCount<2){ createChart("BINANCE:ETHUSDT","Ethereum - ETH"); }
+}
+function selectCoin(i){
+ selected=coins[i]; document.querySelectorAll(".coin").forEach((e,idx)=>e.classList.toggle("active",idx==i));
+ clearCharts(); createChart(selected.tv, selected.name);
+ document.getElementById("coinName").innerText=selected.name+" ("+selected.short+")";
+ document.getElementById("tradeCoin").innerText=selected.short; renderList(); calcFake();
+}
+function renderList(){
+ let html=""; let tick="";
+ coins.forEach((c,idx)=>{
+  let p=prices[c.short]||0; let chg=changes[c.short]||0; let cls=chg>=0?"up":"down"; let arrow=chg>=0?"▲":"▼";
+  let priceTxt = p>0 ? "$ "+p.toLocaleString(undefined,{maximumFractionDigits:4}) : "Chart me dekho 📊";
+  let chgTxt = p>0 ? `${arrow} ${chg.toFixed(2)}%` : "LIVE ●";
+  html+=`<div class="coin ${c==selected?"active":""}" onclick="selectCoin(${idx})"><div><b>${c.name}</b><br><small>${c.short}</small></div><div style="text-align:right"><b>${priceTxt}</b><br><small class="${cls}">${chgTxt}</small></div></div>`;
+  if(p>0) tick+=`${c.short} $${p.toLocaleString()} ${arrow} ${chg.toFixed(2)}%  •  `;
+  if(c==selected && p>0){ document.getElementById("mainPrice").innerText="$ "+p.toLocaleString(undefined,{minimumFractionDigits:2}); document.getElementById("change24").innerHTML=`<span class="${cls}">${arrow} ${chg.toFixed(2)}% (24h)</span>`; }
+ });
+ document.getElementById("coinList").innerHTML=html;
+ if(tick) document.getElementById("tickerText").innerText=tick;
+ renderWallet();
+}
+async function fetchPrices(){
+ if(currentTab!='crypto'){ renderList(); return; }
+ try{
+  let ids=coins.map(c=>c.id).join(",");
+  let res=await fetch(`https://api.coingecko.com/api/v3/simple/price?ids=${ids}&vs_currencies=usd&include_24hr_change=true`);
+  let data=await res.json();
+  coins.forEach(c=>{ if(data[c.id]){ prices[c.short]=data[c.id].usd; changes[c.short]=data[c.id].usd_24h_change||0; } });
+  renderList(); calcFake();
+ }catch(e){}
+}
+function calcFake(){
+ if(currentTab!='crypto'){ document.getElementById("rsiVal").innerText="--"; document.getElementById("finalSignal").innerText="CHART DEKHO"; return; }
+ let chg=changes[selected.short]||0; let rsi=50+chg*2; if(rsi>75)rsi=68; if(rsi<25)rsi=32;
+ document.getElementById("rsiVal").innerText=rsi.toFixed(1);
+ document.getElementById("rsiSignal").innerText=rsi>70?"OVERBOUGHT 🔴":rsi<30?"OVERSOLD 🟢":"NEUTRAL ⚪";
+ document.getElementById("trendVal").innerText=chg>=0?"UPTREND 🟢":"DOWNTREND 🔴";
+ document.getElementById("macdVal").innerText=chg.toFixed(2);
+ document.getElementById("macdSignal").innerText=chg>=0?"BULLISH 🟢":"BEARISH 🔴";
+ document.getElementById("finalSignal").innerText=(rsi<35?"STRONG BUY 🟢":(rsi>70?"SELL 🔴":(chg>=0?"BUY 🟢":"HOLD 🟡")));
+}
+async function fetchNews(){
+ document.getElementById("newsList").innerHTML="<p>⏳ News aa rahi hai...</p>";
+ try{
+  let res=await fetch("https://min-api.cryptocompare.com/data/v2/news/?lang=EN");
+  let data=await res.json(); let html="";
+  data.Data.slice(0,8).forEach(n=>{
+   html+=`<div class="newsItem" onclick="window.open('${n.url}','_blank')"><img src="${n.imageurl}"><div><b>${n.title}</b><small>📰 ${n.source} • ${new Date(n.published_on*1000).toLocaleDateString('hi-IN')} • Tap karke poori khabar padho →</small></div></div>`;
+  });
+  document.getElementById("newsList").innerHTML=html;
+ }catch(e){
+  document.getElementById("newsList").innerHTML=`<div class="newsItem"><div><b>🔥 Bitcoin ne naya record banaya!</b><br><small>Crypto market me tezi, sab coin upar ja rahe hai</small></div></div><div class="newsItem"><div><b>🇮🇳 India me Crypto ke naye rules aa sakte hai</b><br><small>Government crypto ko lekar bada faisla le sakti hai</small></div></div><div class="newsItem"><div><b>🟡 Gold ki keemat badh rahi hai</b><br><small>Investor Gold me paisa laga rahe hai</small></div></div>`;
+ }
+}
+function buy(){ let q=parseFloat(document.getElementById("qty").value); let p=prices[selected.short]; if(!p){alert("Price load ho raha hai, 5 sec ruko!");return;} let cost=q*p*usdToInr; if(cost>balance){alert("Balance kam hai bhai!");return;} balance-=cost; holdings[selected.short]=(holdings[selected.short]||0)+q; save(); alert(`✅ ${q} ${selected.short} kharid liya!`); }
+function sell(){ let q=parseFloat(document.getElementById("qty").value); let p=prices[selected.short]; if(!p){alert("Price load ho raha hai!");return;} if((holdings[selected.short]||0)<q){alert("Pehle BUY karo bhai!");return;} holdings[selected.short]-=q; balance+=q*p*usdToInr; save(); alert(`✅ ${q} ${selected.short} bech diya!`); }
+createChart(selected.tv, selected.name); fetchPrices(); fetchNews();
+setInterval(fetchPrices,10000); renderWallet();
+</script>
+</body>
+</html>
