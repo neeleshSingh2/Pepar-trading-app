@@ -1,73 +1,57 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
-<meta name="viewport" content="width=device-width, initial-scale=1">
-<title>Pepar Trading App</title>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>PEPAR TRADING - V3 ULTIMATE</title>
+<script src="https://s3.tradingview.com/tv.js"></script>
 <style>
-body{background:#0b0e11;color:white;font-family:Arial;padding:15px}
-.card{background:#1e2329;padding:15px;border-radius:12px;margin-bottom:12px}
-h1{color:#f0b90b;text-align:center}
-.price{font-size:32px;color:#0ecb81}
-button{padding:12px;width:48%;border:none;border-radius:8px;font-weight:bold;font-size:16px}
-.buy{background:#0ecb81;color:white}
-.sell{background:#f6465d;color:white}
-input{width:95%;padding:12px;border-radius:8px;border:none;margin:10px 0}
+*{margin:0;padding:0;box-sizing:border-box;font-family:Arial,sans-serif}
+body{background:#07090c;color:#fff;padding-bottom:30px}
+.top{background:#131722;padding:14px 15px;display:flex;justify-content:space-between;align-items:center;position:sticky;top:0;z-index:20;border-bottom:2px solid #fcd535}
+.top b{color:#fcd535;font-size:21px}.top span{color:#0ecb81;font-size:13px}
+.tabs{display:flex;gap:8px;padding:10px;overflow-x:auto;white-space:nowrap}
+.tab{padding:10px 18px;background:#1e222d;border-radius:20px;cursor:pointer;font-weight:bold;border:2px solid transparent}
+.tab.active{background:#fcd535;color:#000}
+.card{background:#131722;border-radius:14px;padding:14px;margin:0 10px 10px}
+.grid{display:grid;grid-template-columns:1fr;gap:10px}
+@media(min-width:900px){.grid{grid-template-columns:280px 1fr 300px}.charts4{grid-template-columns:1fr 1fr}}
+.coin{display:flex;justify-content:space-between;align-items:center;padding:11px;border-radius:10px;cursor:pointer;margin-bottom:6px;border:2px solid transparent;background:#1e222d}
+.coin.active{border-color:#fcd535;background:#2a3040}
+.coin small{color:#8b93a7}.up{color:#0ecb81}.down{color:#f6465d}
+#mainChart{height:380px;background:#000;border-radius:10px;overflow:hidden}
+.mini{height:180px;background:#000;border-radius:10px;overflow:hidden}
+.charts4{display:grid;gap:10px;margin:10px}
+.charts4 h4{margin-bottom:6px}
+.indRow{display:flex;gap:8px;margin-top:10px;flex-wrap:wrap}
+.ind{flex:1;min-width:100px;background:#1e222d;padding:12px;border-radius:10px;text-align:center}
+.ind b{font-size:19px;display:block;margin-top:4px}
+input{width:100%;padding:12px;border-radius:8px;border:none;background:#1e222d;color:#fff;font-size:16px;margin:8px 0}
+.btn{width:100%;padding:14px;border:none;border-radius:10px;font-size:17px;font-weight:bold;cursor:pointer;margin-top:6px}
+.buy{background:#0ecb81;color:#fff}.sell{background:#f6465d;color:#fff}
+.badge{background:#fcd535;color:#000;padding:3px 8px;border-radius:6px;font-size:11px}
+.ticker{background:#fcd535;color:#000;padding:8px 10px;overflow:hidden;white-space:nowrap;font-weight:bold}
+.ticker span{margin-right:30px}
 </style>
 </head>
 <body>
-<h1>🪙 PEPAR TRADING</h1>
-<div class="card">
-<p>Virtual Balance</p>
-<h2 id="bal">₹ 1,00,000</h2>
-<p>BTC / USDT Live Price</p>
-<div class="price" id="price">Loading...</div>
-<p id="change">Live from Binance</p>
+<div class="top"><b>🪙 PEPAR TRADING <span class="badge">V3 ULTIMATE</span></b><span>● LIVE 🟢</span></div>
+<div class="ticker"><marquee id="tickerText">Loading Live Market...</marquee></div>
+
+<div class="tabs">
+<div class="tab active" onclick="switchTab('crypto',this)">₿ CRYPTO</div>
+<div class="tab" onclick="switchTab('forex',this)">💱 FOREX + GOLD</div>
+<div class="tab" onclick="switchTab('indian',this)">🇮🇳 INDIAN MARKET</div>
+<div class="tab" onclick="switchTab('multi',this)">📊 4 CHART EK SATH</div>
 </div>
+
+<div class="grid">
 <div class="card">
-<p>Kitne ka Buy karna hai? (₹ me)</p>
-<input id="amt" type="number" value="1000">
-<br>
-<button class="buy" onclick="buy()">BUY 🟢</button>
-<button class="sell" onclick="sell()">SELL 🔴</button>
+<h3 id="listTitle">🔥 Top Crypto</h3>
+<p style="color:#8b93a7;font-size:12px;margin:6px 0">Kisi pe bhi click karo, chart badal jayega</p>
+<div id="coinList"></div>
 </div>
+
 <div class="card">
-<h3>Meri Holding</h3>
-<p>BTC: <span id="btc">0</span></p>
-<p>Total Value: <span id="total">₹ 1,00,000</span></p>
-<p>Profit / Loss: <span id="pnl">₹ 0</span></p>
-</div>
-<script>
-let balance=100000, btc=0, price=0;
-async function getPrice(){
-  try{
-    let r=await fetch('https://api.binance.com/api/v3/ticker/price?symbol=BTCUSDT');
-    let d=await r.json();
-    price=parseFloat(d.price);
-    document.getElementById('price').innerText='$ '+price.toLocaleString();
-    update();
-  }catch(e){ document.getElementById('price').innerText='Net slow hai, retry...'; }
-}
-function update(){
-  let total=balance+btc*price*83;
-  document.getElementById('bal').innerText='₹ '+Math.round(balance).toLocaleString('en-IN');
-  document.getElementById('btc').innerText=btc.toFixed(5);
-  document.getElementById('total').innerText='₹ '+Math.round(total).toLocaleString('en-IN');
-  let pnl=total-100000;
-  document.getElementById('pnl').innerText='₹ '+Math.round(pnl).toLocaleString('en-IN');
-  document.getElementById('pnl').style.color=pnl>=0?'#0ecb81':'#f6465d';
-}
-function buy(){
-  let amt=parseFloat(document.getElementById('amt').value);
-  if(amt>balance){alert('Paisa kam hai!');return;}
-  btc+=amt/(price*83); balance-=amt; update(); alert('Buy Ho Gaya!');
-}
-function sell(){
-  let amt=parseFloat(document.getElementById('amt').value);
-  let need=amt/(price*83);
-  if(need>btc){alert('Itna BTC nahi hai!');return;}
-  btc-=need; balance+=amt; update(); alert('Sell Ho Gaya!');
-}
-getPrice(); setInterval(getPrice,5000);
-</script>
-</body>
-  </html>
+<div style="display:flex;justify-content:space-between">
+<div><h2 id="coin
