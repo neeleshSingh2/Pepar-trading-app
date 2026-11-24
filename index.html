@@ -1,0 +1,73 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Pepar Trading App</title>
+<style>
+body{background:#0b0e11;color:white;font-family:Arial;padding:15px}
+.card{background:#1e2329;padding:15px;border-radius:12px;margin-bottom:12px}
+h1{color:#f0b90b;text-align:center}
+.price{font-size:32px;color:#0ecb81}
+button{padding:12px;width:48%;border:none;border-radius:8px;font-weight:bold;font-size:16px}
+.buy{background:#0ecb81;color:white}
+.sell{background:#f6465d;color:white}
+input{width:95%;padding:12px;border-radius:8px;border:none;margin:10px 0}
+</style>
+</head>
+<body>
+<h1>🪙 PEPAR TRADING</h1>
+<div class="card">
+<p>Virtual Balance</p>
+<h2 id="bal">₹ 1,00,000</h2>
+<p>BTC / USDT Live Price</p>
+<div class="price" id="price">Loading...</div>
+<p id="change">Live from Binance</p>
+</div>
+<div class="card">
+<p>Kitne ka Buy karna hai? (₹ me)</p>
+<input id="amt" type="number" value="1000">
+<br>
+<button class="buy" onclick="buy()">BUY 🟢</button>
+<button class="sell" onclick="sell()">SELL 🔴</button>
+</div>
+<div class="card">
+<h3>Meri Holding</h3>
+<p>BTC: <span id="btc">0</span></p>
+<p>Total Value: <span id="total">₹ 1,00,000</span></p>
+<p>Profit / Loss: <span id="pnl">₹ 0</span></p>
+</div>
+<script>
+let balance=100000, btc=0, price=0;
+async function getPrice(){
+  try{
+    let r=await fetch('https://api.binance.com/api/v3/ticker/price?symbol=BTCUSDT');
+    let d=await r.json();
+    price=parseFloat(d.price);
+    document.getElementById('price').innerText='$ '+price.toLocaleString();
+    update();
+  }catch(e){ document.getElementById('price').innerText='Net slow hai, retry...'; }
+}
+function update(){
+  let total=balance+btc*price*83;
+  document.getElementById('bal').innerText='₹ '+Math.round(balance).toLocaleString('en-IN');
+  document.getElementById('btc').innerText=btc.toFixed(5);
+  document.getElementById('total').innerText='₹ '+Math.round(total).toLocaleString('en-IN');
+  let pnl=total-100000;
+  document.getElementById('pnl').innerText='₹ '+Math.round(pnl).toLocaleString('en-IN');
+  document.getElementById('pnl').style.color=pnl>=0?'#0ecb81':'#f6465d';
+}
+function buy(){
+  let amt=parseFloat(document.getElementById('amt').value);
+  if(amt>balance){alert('Paisa kam hai!');return;}
+  btc+=amt/(price*83); balance-=amt; update(); alert('Buy Ho Gaya!');
+}
+function sell(){
+  let amt=parseFloat(document.getElementById('amt').value);
+  let need=amt/(price*83);
+  if(need>btc){alert('Itna BTC nahi hai!');return;}
+  btc-=need; balance+=amt; update(); alert('Sell Ho Gaya!');
+}
+getPrice(); setInterval(getPrice,5000);
+</script>
+</body>
+  </html>
